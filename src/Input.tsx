@@ -16,6 +16,7 @@ export const CurrentInput: FC<ICurrentInput> = ({ setAmount }) => {
       prefix={"$"}
       step={10}
       width={140}
+      allowNegativeValue={false}
     />
   );
 };
