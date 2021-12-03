@@ -12,7 +12,7 @@ function App() {
         <div className="dollar-input">
           <CurrentInput setAmount={setAmount} />
         </div>
-        <div>
+        <div className="button-container">
           <ApplePayButton
             onPaymentSuccess={() => {}}
             payment={{ subtotal: "amount" }}
