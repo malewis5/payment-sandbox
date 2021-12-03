@@ -1,7 +1,10 @@
 import { ApplePay } from "braintree-web";
 import * as React from "react";
-import { GenerateClientToken } from "../Braintree/braintreeHooks";
-import css from "./ApplePayButton.scss";
+import {
+  GenerateClientToken,
+  IsApplePaySupported,
+} from "../Braintree/braintreeHooks";
+import "./ApplePayButton.scss";
 import { createApplePaySession, createPaymentRequest } from "./ApplePayUtils";
 
 type Payment = {
@@ -115,13 +118,13 @@ const ApplePayButton: React.FC<IApplePayButton> = ({
   shippingMethods,
   buttonType = "buy",
 }) => {
-  //TODO: Fix endpoint
   const { applePayInstance } = GenerateClientToken(
     "https://payment-microservice.ngrok.io/client-token"
   );
-  return (
+  const applePaySupported = IsApplePaySupported();
+  return applePaySupported ? (
     <div
-      className={`${css.applePayButton} ${css.applePayButtonBlack} ${css[buttonType]}`}
+      className={"applePayButton applePayButtonBlack checkout"}
       onClick={() =>
         handleApplePayClick(
           applePayInstance,
@@ -135,7 +138,7 @@ const ApplePayButton: React.FC<IApplePayButton> = ({
         )
       }
     />
-  );
+  ) : null;
 };
 
 export { ApplePayButton };

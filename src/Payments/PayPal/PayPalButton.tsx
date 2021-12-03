@@ -7,10 +7,10 @@ import {
 
 interface IPayPalButton {
   label?: string;
+  amount?: string;
 }
 
-const PayPalButton: React.FC<IPayPalButton> = () => {
-  const [amount, setAmount] = React.useState<string>();
+const PayPalButton: React.FC<IPayPalButton> = ({ amount }) => {
   const { payPalInstance } = GenerateClientToken(
     "https://payment-microservice.ngrok.io/client-token"
   );
@@ -21,17 +21,6 @@ const PayPalButton: React.FC<IPayPalButton> = () => {
 
   return (
     <div>
-      <div className="cart">
-        <p>Amount: </p>
-        <input
-          type="number"
-          min="0.01"
-          max="9999.99"
-          onChange={(e) => setAmount(e.target.value)}
-          value={amount}
-        />
-      </div>
-
       <div id="paypal-button" />
     </div>
   );

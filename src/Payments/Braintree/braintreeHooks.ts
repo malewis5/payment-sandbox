@@ -156,6 +156,13 @@ export const renderPayPalButton = async (
     .then(function (paypalCheckoutInstance) {
       return paypal
         .Buttons({
+          style: {
+            layout: "vertical",
+            color: "gold",
+            shape: "rect",
+            label: "checkout",
+            height: 30,
+          },
           fundingSource: paypal.FUNDING.PAYPAL,
           createOrder: function () {
             return paypalCheckoutInstance.createPayment({
