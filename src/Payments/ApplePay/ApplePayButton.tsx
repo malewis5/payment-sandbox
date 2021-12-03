@@ -133,7 +133,6 @@ const ApplePayButton: React.FC<IApplePayButton> = ({
           onPaymentSuccess,
           shippingHandler,
           taxHandler,
-
           shippingMethods
         )
       }

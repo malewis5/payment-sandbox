@@ -163,6 +163,7 @@ export const renderPayPalButton = async (
             label: "checkout",
             height: 30,
           },
+
           fundingSource: paypal.FUNDING.PAYPAL,
           createOrder: function () {
             return paypalCheckoutInstance.createPayment({

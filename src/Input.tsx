@@ -11,7 +11,7 @@ export const CurrentInput: FC<ICurrentInput> = ({ setAmount }) => {
       onValueChange={(value) => setAmount(value)}
       id="validation-example-2-field"
       placeholder="$1,234,567"
-      allowDecimals={false}
+      allowDecimals={true}
       className={`form-control`}
       prefix={"$"}
       step={10}

@@ -5,17 +5,20 @@ import CurrentInput from "./Input";
 import React from "react";
 
 function App() {
-  const [amount, setAmount] = React.useState<string>();
+  const [amount, setAmount] = React.useState<string>("");
+  const disabled = amount ? false : true;
   return (
     <div className="App">
       <header className="App-header">
         <div className="dollar-input">
+          {disabled && <p>Amount must be greater than $0</p>}
           <CurrentInput setAmount={setAmount} />
         </div>
+
         <div className="button-container">
           <ApplePayButton
             onPaymentSuccess={() => {}}
-            payment={{ subtotal: "amount" }}
+            payment={{ subtotal: amount ?? "" }}
             storeName="Demo"
           />
           <PayPalButton amount={amount} />
