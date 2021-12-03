@@ -1,0 +1,79 @@
+.applePayButton {
+  display: inline-block;
+  -webkit-appearance: -apple-pay-button;
+  width: 100%;
+  cursor: pointer;
+  /* Use any supported button type. */
+}
+
+.applePayButtonBlack {
+  -apple-pay-button-style: black;
+}
+
+.checkout {
+  -apple-pay-button-type: check-out;
+}
+
+.book {
+  -apple-pay-button-type: book;
+}
+
+.buy {
+  -apple-pay-button-type: buy;
+}
+
+.donate {
+  -apple-pay-button-type: donate;
+}
+
+.plain {
+  -apple-pay-button-type: plain;
+}
+
+.set-up {
+  -apple-pay-button-type: set-up;
+}
+
+.subscribe {
+  -apple-pay-button-type: subscribe;
+}
+
+.add-money {
+  -apple-pay-button-type: add-money;
+}
+
+.contribute {
+  -apple-pay-button-type: contribute;
+}
+
+.order {
+  -apple-pay-button-type: order;
+}
+
+.reload {
+  -apple-pay-button-type: reload;
+}
+
+.order {
+  -apple-pay-button-type: order;
+}
+
+.reload {
+  -apple-pay-button-type: reload;
+}
+
+.rent {
+  -apple-pay-button-type: rent;
+}
+
+.support {
+  -apple-pay-button-type: support;
+}
+
+.tip {
+  -apple-pay-button-type: tip;
+}
+
+.top-up {
+  -apple-pay-button-type: top-up;
+}
