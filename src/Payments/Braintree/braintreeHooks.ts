@@ -152,6 +152,7 @@ export const renderPayPalButton = async (
     ?.loadPayPalSDK({
       currency: "USD",
       intent: "capture",
+      debug: true,
     })
     .then(function (paypalCheckoutInstance) {
       return paypal
@@ -173,33 +174,74 @@ export const renderPayPalButton = async (
               intent: "capture", // Must match the intent passed in with loadPayPalSDK
               enableShippingAddress: true,
               shippingAddressEditable: true,
-              shippingOptions: [
-                {
-                  id: "FreeShip",
-                  label: "Free Shipping",
-                  selected: true,
-                  type: "SHIPPING",
-                  amount: {
-                    currency: "USD",
-                    value: "0",
-                  },
-                },
-              ],
+              // shippingOptions: [
+              //   {
+              //     id: "FreeShip",
+              //     label: "Free Shipping",
+              //     selected: true,
+              //     type: "SHIPPING",
+              //     amount: {
+              //       currency: "USD",
+              //       value: "0",
+              //     },
+              //   },
+              // ],
             });
           },
+
+          onShippingChange: function (data, actions) {
+            // Patch the shipping amount
+            const shippingAmount =
+              data.shipping_address.state === "CA" ? "0.00" : "5.00";
+            return actions.order.patch([
+              {
+                op: "replace",
+                path: "/purchase_units/@reference_id=='default'/amount",
+                value: {
+                  currency_code: "USD",
+                  value: (
+                    parseFloat(amount) + parseFloat(shippingAmount)
+                  ).toFixed(2),
+                  breakdown: {
+                    item_total: {
+                      currency_code: "USD",
+                      value: amount,
+                    },
+                    shipping: {
+                      currency_code: "USD",
+                      value: shippingAmount,
+                    },
+                  },
+                },
+              },
+            ]);
+          },
+
           onApprove: async (data: any, actions: any) => {
             const payload = await paypalCheckoutInstance.tokenizePayment(data);
+            const totalAmount = await actions.order
+              .get([
+                {
+                  path: "/purchase_units/@reference_id=='default'/amount",
+                },
+              ])
+              .then((res) => res.purchase_units[0].amount.value);
             const postNonce = async () => {
               const requestOptions = {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   nonce: payload.nonce,
-                  payment: { total: { amount: "10" } },
+                  payment: {
+                    total: {
+                      amount: totalAmount,
+                    },
+                  },
                   postalCode: payload.details.billingAddress?.postalCode,
                   shippingContact: payload.details.shippingAddress ?? "",
                 }),
               };
+              console.log(payload);
               fetch(
                 "https://payment-microservice.ngrok.io/payment-nonce",
                 requestOptions
@@ -210,6 +252,8 @@ export const renderPayPalButton = async (
               });
             };
             postNonce();
+            console.log(payload);
+            console.log(data);
           },
 
           onCancel: (data: any) => {
