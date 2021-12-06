@@ -225,7 +225,10 @@ export const renderPayPalButton = async (
                   path: "/purchase_units/@reference_id=='default'/amount",
                 },
               ])
-              .then((res) => res.purchase_units[0].amount.value);
+              .then((res) => res.purchase_units[0].amount.value)
+              .catch((err) => {
+                throw new Error(err);
+              });
             const postNonce = async () => {
               const requestOptions = {
                 method: "POST",
