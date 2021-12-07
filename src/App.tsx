@@ -6,7 +6,7 @@ import React from "react";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("");
-  const disabled = parseFloat(amount) > 0 ? false : true;
+
   return (
     <div className="App">
       <header className="App-header">
