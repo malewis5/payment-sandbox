@@ -151,13 +151,13 @@ export const renderPayPalButton = async (
     ?.loadPayPalSDK({
       currency: "USD",
       intent: "capture",
-      debug: true,
+      debug: false,
+      commit: false,
     })
     .then(function (paypalCheckoutInstance) {
       //@ts-ignore
       return (
-        /*@ts-ignore*/
-        paypal
+        window.paypal
           //@ts-ignore
           .Buttons({
             style: {
@@ -179,18 +179,6 @@ export const renderPayPalButton = async (
                 intent: "capture", // Must match the intent passed in with loadPayPalSDK
                 enableShippingAddress: true,
                 shippingAddressEditable: true,
-                // shippingOptions: [
-                //   {
-                //     id: "FreeShip",
-                //     label: "Free Shipping",
-                //     selected: true,
-                //     type: "SHIPPING",
-                //     amount: {
-                //       currency: "USD",
-                //       value: "0",
-                //     },
-                //   },
-                // ],
               });
             },
 
@@ -222,45 +210,29 @@ export const renderPayPalButton = async (
               ]);
             },
 
-            onApprove: async (data: any, actions: any) => {
-              const payload = await paypalCheckoutInstance.tokenizePayment(
-                data
-              );
-              const totalAmount = await actions.order
-                .get([
-                  {
-                    path: "/purchase_units/@reference_id=='default'/amount",
-                  },
-                ])
-                .then((res: any) => res.purchase_units[0].amount.value)
-                .catch((err: any) => {
-                  throw new Error(err);
-                });
-              const postNonce = async () => {
-                const requestOptions = {
+            onApprove: async function (data: any) {
+              const result = await fetch(
+                "https://payment-microservice.ngrok.io/get-paypal-transaction",
+                {
                   method: "POST",
-                  headers: { "Content-Type": "application/json" },
+                  headers: {
+                    "content-type": "application/json",
+                  },
                   body: JSON.stringify({
-                    nonce: payload.nonce,
-                    payment: {
-                      total: {
-                        amount: totalAmount,
-                      },
-                    },
-                    postalCode: payload.details.billingAddress?.postalCode,
-                    shippingContact: payload.details.shippingAddress ?? "",
+                    orderID: data.orderID,
                   }),
-                };
-                fetch(
-                  "https://payment-microservice.ngrok.io/payment-nonce",
-                  requestOptions
-                ).then((res) => {
-                  if (res.status !== 200) {
-                    throw Error("Error posting nonce");
-                  }
+                }
+              )
+                .then((res) => {
+                  return res.json();
+                })
+                .then((data) => {
+                  return data.result;
+                })
+                .catch((e) => {
+                  throw Error(e);
                 });
-              };
-              postNonce();
+              console.log(result ?? "nothing here folks");
             },
 
             onCancel: (data: any) => {
