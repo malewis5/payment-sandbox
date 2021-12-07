@@ -1,4 +1,3 @@
-//@ts-nocheck
 import {
   ApplePay,
   applePay,
@@ -146,7 +145,7 @@ export const IsApplePaySetup: () => boolean | undefined = () => {
 
 export const renderPayPalButton = async (
   payPalInstance: PayPalCheckout,
-  amount
+  amount: string
 ) => {
   payPalInstance
     ?.loadPayPalSDK({
@@ -155,118 +154,124 @@ export const renderPayPalButton = async (
       debug: true,
     })
     .then(function (paypalCheckoutInstance) {
-      return paypal
-        .Buttons({
-          style: {
-            layout: "vertical",
-            color: "gold",
-            shape: "rect",
-            label: "checkout",
-            height: 30,
-          },
+      //@ts-ignore
+      return (
+        /*@ts-ignore*/
+        paypal
+          //@ts-ignore
+          .Buttons({
+            style: {
+              layout: "vertical",
+              color: "gold",
+              shape: "rect",
+              label: "checkout",
+              height: 30,
+            },
+            //@ts-ignore
+            fundingSource: paypal.FUNDING.PAYPAL,
+            createOrder: function () {
+              return paypalCheckoutInstance.createPayment({
+                //@ts-ignore
+                flow: "checkout", // Required
+                amount: amount, // Required
+                currency: "USD", // Required, must match the currency passed in with loadPayPalSDK
+                //@ts-ignore
+                intent: "capture", // Must match the intent passed in with loadPayPalSDK
+                enableShippingAddress: true,
+                shippingAddressEditable: true,
+                // shippingOptions: [
+                //   {
+                //     id: "FreeShip",
+                //     label: "Free Shipping",
+                //     selected: true,
+                //     type: "SHIPPING",
+                //     amount: {
+                //       currency: "USD",
+                //       value: "0",
+                //     },
+                //   },
+                // ],
+              });
+            },
 
-          fundingSource: paypal.FUNDING.PAYPAL,
-          createOrder: function () {
-            return paypalCheckoutInstance.createPayment({
-              flow: "checkout", // Required
-              amount: amount, // Required
-              currency: "USD", // Required, must match the currency passed in with loadPayPalSDK
-              intent: "capture", // Must match the intent passed in with loadPayPalSDK
-              enableShippingAddress: true,
-              shippingAddressEditable: true,
-              // shippingOptions: [
-              //   {
-              //     id: "FreeShip",
-              //     label: "Free Shipping",
-              //     selected: true,
-              //     type: "SHIPPING",
-              //     amount: {
-              //       currency: "USD",
-              //       value: "0",
-              //     },
-              //   },
-              // ],
-            });
-          },
-
-          onShippingChange: function (data, actions) {
-            // Patch the shipping amount
-            const shippingAmount =
-              data.shipping_address.state === "CA" ? "0.00" : "5.00";
-            return actions.order.patch([
-              {
-                op: "replace",
-                path: "/purchase_units/@reference_id=='default'/amount",
-                value: {
-                  currency_code: "USD",
-                  value: (
-                    parseFloat(amount) + parseFloat(shippingAmount)
-                  ).toFixed(2),
-                  breakdown: {
-                    item_total: {
-                      currency_code: "USD",
-                      value: amount,
-                    },
-                    shipping: {
-                      currency_code: "USD",
-                      value: shippingAmount,
-                    },
-                  },
-                },
-              },
-            ]);
-          },
-
-          onApprove: async (data: any, actions: any) => {
-            const payload = await paypalCheckoutInstance.tokenizePayment(data);
-            const totalAmount = await actions.order
-              .get([
+            onShippingChange: function (data: any, actions: any) {
+              // Patch the shipping amount
+              const shippingAmount =
+                data.shipping_address.state === "CA" ? "0.00" : "5.00";
+              return actions.order.patch([
                 {
+                  op: "replace",
                   path: "/purchase_units/@reference_id=='default'/amount",
-                },
-              ])
-              .then((res) => res.purchase_units[0].amount.value)
-              .catch((err) => {
-                throw new Error(err);
-              });
-            const postNonce = async () => {
-              const requestOptions = {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  nonce: payload.nonce,
-                  payment: {
-                    total: {
-                      amount: totalAmount,
+                  value: {
+                    currency_code: "USD",
+                    value: (
+                      parseFloat(amount) + parseFloat(shippingAmount)
+                    ).toFixed(2),
+                    breakdown: {
+                      item_total: {
+                        currency_code: "USD",
+                        value: amount,
+                      },
+                      shipping: {
+                        currency_code: "USD",
+                        value: shippingAmount,
+                      },
                     },
                   },
-                  postalCode: payload.details.billingAddress?.postalCode,
-                  shippingContact: payload.details.shippingAddress ?? "",
-                }),
+                },
+              ]);
+            },
+
+            onApprove: async (data: any, actions: any) => {
+              const payload = await paypalCheckoutInstance.tokenizePayment(
+                data
+              );
+              const totalAmount = await actions.order
+                .get([
+                  {
+                    path: "/purchase_units/@reference_id=='default'/amount",
+                  },
+                ])
+                .then((res: any) => res.purchase_units[0].amount.value)
+                .catch((err: any) => {
+                  throw new Error(err);
+                });
+              const postNonce = async () => {
+                const requestOptions = {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    nonce: payload.nonce,
+                    payment: {
+                      total: {
+                        amount: totalAmount,
+                      },
+                    },
+                    postalCode: payload.details.billingAddress?.postalCode,
+                    shippingContact: payload.details.shippingAddress ?? "",
+                  }),
+                };
+                fetch(
+                  "https://payment-microservice.ngrok.io/payment-nonce",
+                  requestOptions
+                ).then((res) => {
+                  if (res.status !== 200) {
+                    throw Error("Error posting nonce");
+                  }
+                });
               };
-              console.log(payload);
-              fetch(
-                "https://payment-microservice.ngrok.io/payment-nonce",
-                requestOptions
-              ).then((res) => {
-                if (res.status !== 200) {
-                  throw Error("Error posting nonce");
-                }
-              });
-            };
-            postNonce();
-            console.log(payload);
-            console.log(data);
-          },
+              postNonce();
+            },
 
-          onCancel: (data: any) => {
-            console.log("PayPal payment cancelled", JSON.stringify(data));
-          },
+            onCancel: (data: any) => {
+              console.log("PayPal payment cancelled", JSON.stringify(data));
+            },
 
-          onError: (err: any) => {
-            throw Error(err);
-          },
-        })
-        .render("#paypal-button");
+            onError: (err: any) => {
+              throw Error(err);
+            },
+          })
+          .render("#paypal-button")
+      );
     });
 };

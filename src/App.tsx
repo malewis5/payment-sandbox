@@ -11,7 +11,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div className="dollar-input">
-          {disabled && <p>Amount must be greater than $0</p>}
+          <p>Amount must be greater than $0</p>
           <CurrentInput setAmount={setAmount} />
         </div>
 

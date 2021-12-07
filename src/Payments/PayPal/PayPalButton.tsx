@@ -7,7 +7,7 @@ import {
 
 interface IPayPalButton {
   label?: string;
-  amount?: string;
+  amount: string;
 }
 
 const PayPalButton: React.FC<IPayPalButton> = ({ amount }) => {
