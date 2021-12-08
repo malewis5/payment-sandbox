@@ -1,7 +1,7 @@
 import "./App.scss";
-import { ApplePayButton } from "./Payments/ApplePay/ApplePayButton";
-import { PayPalButton } from "./Payments/PayPal/PayPalButton";
-import CurrentInput from "./Input";
+import { ApplePayButton } from "./components/Payments/ApplePay/ApplePayButton";
+import { PayPalButton } from "./components/Payments/PayPal/PayPalButton";
+import CurrentInput from "./components/Input";
 import React from "react";
 
 function App() {
