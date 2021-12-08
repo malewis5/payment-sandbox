@@ -8,15 +8,16 @@ import {
 interface IPayPalButton {
   label?: string;
   amount: string;
+  setPayload?: any;
 }
 
-const PayPalButton: React.FC<IPayPalButton> = ({ amount }) => {
+const PayPalButton: React.FC<IPayPalButton> = ({ amount, setPayload }) => {
   const { payPalInstance } = GenerateClientToken(
     "https://payment-microservice.ngrok.io/client-token"
   );
 
   React.useEffect(() => {
-    if (payPalInstance) renderPayPalButton(payPalInstance, amount);
+    if (payPalInstance) renderPayPalButton(payPalInstance, amount, setPayload);
   });
 
   return (

@@ -3,9 +3,11 @@ import { ApplePayButton } from "./components/Payments/ApplePay/ApplePayButton";
 import { PayPalButton } from "./components/Payments/PayPal/PayPalButton";
 import CurrentInput from "./components/Input";
 import React from "react";
+import SubmitButton from "./components/SubmitButton";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("");
+  const [payload, setPayload] = React.useState<any>("");
 
   return (
     <div className="App">
@@ -21,7 +23,8 @@ function App() {
             payment={{ subtotal: amount ?? "" }}
             storeName="Demo"
           />
-          <PayPalButton amount={amount} />
+          <PayPalButton amount={amount} setPayload={setPayload} />
+          <SubmitButton payload={payload} />
         </div>
       </header>
     </div>

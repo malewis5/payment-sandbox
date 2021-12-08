@@ -7,6 +7,7 @@ import {
   PayPalCheckout,
 } from "braintree-web";
 import { useEffect, useState } from "react";
+import { postNonce } from "../PayPal/PayPalUtils";
 
 type ClientTokenReturnType = {
   token: string | undefined;
@@ -145,7 +146,8 @@ export const IsApplePaySetup: () => boolean | undefined = () => {
 
 export const renderPayPalButton = async (
   payPalInstance: PayPalCheckout,
-  amount: string
+  amount: string,
+  setPayload?: any
 ) => {
   payPalInstance
     ?.loadPayPalSDK({
@@ -210,8 +212,14 @@ export const renderPayPalButton = async (
               ]);
             },
 
-            onApprove: async function (data: any) {
-              const result = await fetch(
+            onApprove: async function (data: any, actions: any) {
+              paypalCheckoutInstance
+                .tokenizePayment(data)
+                .then(function (payload) {
+                  setPayload(payload);
+                });
+
+              const transactionDetails = await fetch(
                 "https://payment-microservice.ngrok.io/get-paypal-transaction",
                 {
                   method: "POST",
@@ -232,7 +240,6 @@ export const renderPayPalButton = async (
                 .catch((e) => {
                   throw Error(e);
                 });
-              console.log(result ?? "nothing here folks");
             },
 
             onCancel: (data: any) => {
