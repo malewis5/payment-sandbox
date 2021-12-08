@@ -10,7 +10,7 @@ import { IsApplePaySupported } from "./components/Payments/ApplePay/ApplePayUtil
 function App() {
   const [amount, setAmount] = React.useState<string>("");
   const [payload, setPayload] = React.useState<any>("");
-  const { clientInstance } = GenerateClientToken(
+  const { clientInstance, serverError, isLoading } = GenerateClientToken(
     "https://payment-microservice.ngrok.io/client-token"
   );
   const isSupported = IsApplePaySupported();
@@ -24,8 +24,8 @@ function App() {
         </div>
 
         <div className="button-container">
-          {!clientInstance && <p>Loading...</p>}
-          {clientInstance && (
+          {isLoading && <p>Loading...</p>}
+          {!isLoading && (
             <>
               {isSupported && (
                 <ApplePayButton
@@ -45,6 +45,7 @@ function App() {
           )}
           <SubmitButton payload={payload} setPayload={setPayload} />
         </div>
+        {serverError && <p className="error">Error connecting to server</p>}
       </header>
     </div>
   );

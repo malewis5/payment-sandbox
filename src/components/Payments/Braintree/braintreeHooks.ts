@@ -40,7 +40,6 @@ export const GenerateClientToken = (
       } catch (e: any) {
         setServerError(true);
         setIsLoading(false);
-        throw Error(e.message);
       }
     };
 
