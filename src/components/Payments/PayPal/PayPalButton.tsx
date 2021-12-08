@@ -1,4 +1,4 @@
-import { Client, PayPalCheckout } from "braintree-web";
+import { Client } from "braintree-web";
 import * as React from "react";
 import "./PayPalButton.scss";
 import { authPayPal, renderPayPalButton } from "./PayPalUtils";

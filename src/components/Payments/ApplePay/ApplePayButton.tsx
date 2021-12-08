@@ -6,7 +6,6 @@ import {
   authApplePay,
   createApplePaySession,
   createPaymentRequest,
-  IsApplePaySupported,
 } from "./ApplePayUtils";
 
 type Payment = {
@@ -132,9 +131,7 @@ const ApplePayButton: React.FC<IApplePayButton> = ({
     };
     createApplePayInstance(client);
   }, [client]);
-
-  const applePaySupported = IsApplePaySupported();
-  return applePaySupported ? (
+  return (
     <div
       className={"applePayButton applePayButtonBlack checkout"}
       onClick={() =>
@@ -149,7 +146,7 @@ const ApplePayButton: React.FC<IApplePayButton> = ({
         )
       }
     />
-  ) : null;
+  );
 };
 
 export { ApplePayButton };

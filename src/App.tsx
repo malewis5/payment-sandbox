@@ -5,6 +5,7 @@ import CurrentInput from "./components/Input";
 import React from "react";
 import SubmitButton from "./components/SubmitButton";
 import { GenerateClientToken } from "./components/Payments/Braintree/braintreeHooks";
+import { IsApplePaySupported } from "./components/Payments/ApplePay/ApplePayUtils";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("");
@@ -12,6 +13,7 @@ function App() {
   const { clientInstance } = GenerateClientToken(
     "https://payment-microservice.ngrok.io/client-token"
   );
+  const isSupported = IsApplePaySupported();
 
   return (
     <div className="App">
@@ -22,17 +24,25 @@ function App() {
         </div>
 
         <div className="button-container">
-          <ApplePayButton
-            onPaymentSuccess={() => {}}
-            payment={{ subtotal: amount ?? "" }}
-            storeName="Demo"
-            client={clientInstance}
-          />
-          <PayPalButton
-            client={clientInstance}
-            amount={amount}
-            setPayload={setPayload}
-          />
+          {!clientInstance && <p>Loading...</p>}
+          {clientInstance && (
+            <>
+              {isSupported && (
+                <ApplePayButton
+                  onPaymentSuccess={() => {}}
+                  payment={{ subtotal: amount ?? "" }}
+                  storeName="Demo"
+                  client={clientInstance}
+                />
+              )}
+
+              <PayPalButton
+                client={clientInstance}
+                amount={amount}
+                setPayload={setPayload}
+              />
+            </>
+          )}
           <SubmitButton payload={payload} setPayload={setPayload} />
         </div>
       </header>
