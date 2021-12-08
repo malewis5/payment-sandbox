@@ -1,13 +1,26 @@
-// @ts-nocheck
-import { ApplePay } from "braintree-web";
+import { applePay, ApplePay, Client } from "braintree-web";
+import React from "react";
 import { shippingHandlerFunction, taxHandlerFunction } from "./ApplePayButton";
+
+// Create Apple Pay instance
+export const authApplePay = async (instance: Client): Promise<ApplePay> => {
+  const applePayInstance = await applePay
+    .create({
+      client: instance,
+    })
+    .then((instance) => instance)
+    .catch((e: any) => {
+      throw Error(e);
+    });
+  return applePayInstance;
+};
 
 export const createLineItems = (
   subtotal: string,
   shipping?: string,
   shippingMethods?: ApplePayJS.ApplePayShippingMethod[],
   tax?: string
-): Array<ApplePayJS.ApplePayLineItem> => {
+): ApplePayJS.ApplePayLineItem[] => {
   const lineItems: Array<ApplePayJS.ApplePayLineItem> = [];
   if (subtotal) {
     lineItems.push({ label: "Subtotal", amount: subtotal, type: "final" });
@@ -44,6 +57,7 @@ export const createPaymentRequest = (
           label: storeName,
           amount: calculateApplePayTotal(subtotal, shipping, tax),
         },
+        //@ts-ignore
         lineItems: createLineItems(subtotal, shipping, shippingMethods, tax),
         shippingMethods: shippingMethods,
         requiredBillingContactFields: ["postalAddress"],
@@ -236,4 +250,44 @@ export const createApplePaySession = (
   }
 
   session.begin();
+};
+
+// Check to see if the browser supports Apple Pay
+export const IsApplePaySupported: () => boolean | undefined = () => {
+  const [isSupported, setIsSupported] = React.useState<boolean>();
+  React.useEffect(() => {
+    const checkApplePaySupport = () => {
+      return (
+        //@ts-ignore
+        (window as unknown as ApplePayWindow).ApplePaySession &&
+        //@ts-ignore
+        (window as unknown as ApplePayWindow).ApplePaySession.supportsVersion(
+          3
+        ) &&
+        //@ts-ignore
+        (window as unknown as ApplePayWindow).ApplePaySession.canMakePayments()
+      );
+    };
+    const isSupported = checkApplePaySupport();
+    setIsSupported(isSupported);
+  }, []);
+  return isSupported;
+};
+
+// Check if user has Apple Pay setup
+export const IsApplePaySetup: () => boolean | undefined = () => {
+  const [isSetup, setIsSetup] = React.useState<boolean>();
+  React.useEffect(() => {
+    const checkIsSetup = () => {
+      //TODO: Merchant ID env variable
+      return (
+        window as unknown as ApplePayJS.ApplePayWindow
+      ).ApplePaySession.canMakePaymentsWithActiveCard(
+        "merchant.revcommerce.com"
+      );
+    };
+    const isSupported = checkIsSetup();
+    setIsSetup(isSupported);
+  }, []);
+  return isSetup;
 };

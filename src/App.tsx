@@ -4,10 +4,14 @@ import { PayPalButton } from "./components/Payments/PayPal/PayPalButton";
 import CurrentInput from "./components/Input";
 import React from "react";
 import SubmitButton from "./components/SubmitButton";
+import { GenerateClientToken } from "./components/Payments/Braintree/braintreeHooks";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("");
   const [payload, setPayload] = React.useState<any>("");
+  const { clientInstance } = GenerateClientToken(
+    "https://payment-microservice.ngrok.io/client-token"
+  );
 
   return (
     <div className="App">
@@ -22,9 +26,14 @@ function App() {
             onPaymentSuccess={() => {}}
             payment={{ subtotal: amount ?? "" }}
             storeName="Demo"
+            client={clientInstance}
           />
-          <PayPalButton amount={amount} setPayload={setPayload} />
-          <SubmitButton payload={payload} />
+          <PayPalButton
+            client={clientInstance}
+            amount={amount}
+            setPayload={setPayload}
+          />
+          <SubmitButton payload={payload} setPayload={setPayload} />
         </div>
       </header>
     </div>

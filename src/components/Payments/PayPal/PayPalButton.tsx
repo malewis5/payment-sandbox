@@ -1,24 +1,32 @@
+import { Client, PayPalCheckout } from "braintree-web";
 import * as React from "react";
 import "./PayPalButton.scss";
-import {
-  GenerateClientToken,
-  renderPayPalButton,
-} from "../Braintree/braintreeHooks";
+import { authPayPal, renderPayPalButton } from "./PayPalUtils";
 
 interface IPayPalButton {
   label?: string;
   amount: string;
   setPayload?: any;
+  client?: Client;
 }
 
-const PayPalButton: React.FC<IPayPalButton> = ({ amount, setPayload }) => {
-  const { payPalInstance } = GenerateClientToken(
-    "https://payment-microservice.ngrok.io/client-token"
-  );
-
+const PayPalButton: React.FC<IPayPalButton> = ({
+  amount,
+  setPayload,
+  client,
+}) => {
   React.useEffect(() => {
-    if (payPalInstance) renderPayPalButton(payPalInstance, amount, setPayload);
-  });
+    console.log("Fetched paypal instance");
+    console.log(client);
+    const createPayPalInstance = async () => {
+      if (client) {
+        await authPayPal(client).then((paypalInstance) => {
+          renderPayPalButton(paypalInstance, "19.99");
+        });
+      }
+    };
+    createPayPalInstance();
+  }, [client]);
 
   return (
     <div>

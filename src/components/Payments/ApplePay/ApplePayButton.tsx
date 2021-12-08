@@ -1,11 +1,13 @@
-import { ApplePay } from "braintree-web";
+import { ApplePay, Client } from "braintree-web";
 import * as React from "react";
-import {
-  GenerateClientToken,
-  IsApplePaySupported,
-} from "../Braintree/braintreeHooks";
+
 import "./ApplePayButton.scss";
-import { createApplePaySession, createPaymentRequest } from "./ApplePayUtils";
+import {
+  authApplePay,
+  createApplePaySession,
+  createPaymentRequest,
+  IsApplePaySupported,
+} from "./ApplePayUtils";
 
 type Payment = {
   subtotal: string;
@@ -80,6 +82,7 @@ const handleApplePayClick = (
 
 interface IApplePayButton {
   onPaymentSuccess: (response: any) => void;
+  client?: Client;
   payment: Payment;
   storeName: string;
   taxHandler?: taxHandlerFunction;
@@ -113,14 +116,23 @@ const ApplePayButton: React.FC<IApplePayButton> = ({
   storeName,
   onPaymentSuccess,
   taxHandler,
-
+  client,
   shippingHandler,
   shippingMethods,
-  buttonType = "buy",
 }) => {
-  const { applePayInstance } = GenerateClientToken(
-    "https://payment-microservice.ngrok.io/client-token"
-  );
+  const [applePayInstance, setApplePayInstance] = React.useState<ApplePay>();
+
+  React.useEffect(() => {
+    console.log("Fetched apple pay instance");
+    const createApplePayInstance = async (instance?: Client) => {
+      if (instance) {
+        const applePayInstance = await authApplePay(instance);
+        setApplePayInstance(applePayInstance);
+      }
+    };
+    createApplePayInstance(client);
+  }, [client]);
+
   const applePaySupported = IsApplePaySupported();
   return applePaySupported ? (
     <div
