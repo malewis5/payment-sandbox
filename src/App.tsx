@@ -1,11 +1,11 @@
 import "./App.scss";
-import { ApplePayButton } from "./components/Payments/ApplePay/ApplePayButton";
 import { PayPalButton } from "./components/Payments/PayPal/PayPalButton";
 import CurrentInput from "./components/Input";
 import React from "react";
 import SubmitButton from "./components/SubmitButton";
 import { GenerateClientToken } from "./components/Payments/Braintree/braintreeHooks";
 import { IsApplePaySupported } from "./components/Payments/ApplePay/ApplePayUtils";
+import { ApplePayButton } from "./components/Payments/ApplePay/ApplePayButton";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("");
