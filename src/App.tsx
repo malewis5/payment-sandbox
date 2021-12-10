@@ -15,21 +15,6 @@ function App() {
   );
   const isSupported = IsApplePaySupported();
 
-  const shippingMethods = [
-    {
-      label: "Free Shipping",
-      detail: "5-7 days",
-      amount: "0",
-      identifier: "FreeShip",
-    },
-    {
-      label: "Expedited Shipping",
-      detail: "2 days",
-      amount: "2.99",
-      identifier: "ExpShip",
-    },
-  ];
-
   const handleShipping = (e: any) => {
     let price = "0";
     if (e.shippingContact.administrativeArea === "FL") {
@@ -52,9 +37,7 @@ function App() {
   };
 
   const handleTax = (e: any) => {
-    if (e.shippingContact.administrativeArea === "FL") {
-      return "0";
-    } else return "3.26";
+    return "3.26";
   };
 
   return (
@@ -75,7 +58,6 @@ function App() {
                   payment={{ subtotal: amount ?? "" }}
                   storeName="Sandbox Demo"
                   client={clientInstance}
-                  // shippingMethods={shippingMethods}
                   shippingHandler={handleShipping}
                   taxHandler={handleTax}
                 />
