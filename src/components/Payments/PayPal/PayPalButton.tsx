@@ -16,8 +16,6 @@ const PayPalButton: React.FC<IPayPalButton> = ({
   client,
 }) => {
   React.useEffect(() => {
-    console.log("Fetched paypal instance");
-    console.log(client);
     const createPayPalInstance = async () => {
       if (client) {
         await authPayPal(client).then((paypalInstance) => {

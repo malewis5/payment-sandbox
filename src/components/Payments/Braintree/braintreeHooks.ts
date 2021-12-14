@@ -18,7 +18,6 @@ export const GenerateClientToken = (
   const [clientInstance, setClientInstance] = useState<Client>();
 
   useEffect(() => {
-    console.log("Fetched instance");
     setIsLoading(true);
     const fetchToken = async () => {
       try {

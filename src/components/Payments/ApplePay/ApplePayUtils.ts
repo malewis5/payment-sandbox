@@ -1,6 +1,6 @@
 import { applePay, ApplePay, Client } from "braintree-web";
 import React from "react";
-import { shippingHandlerFunction, taxHandlerFunction } from "./ApplePayButton";
+import { shippingHandlerFunction, taxHandlerFunction } from "./types";
 
 // Create Apple Pay instance
 export const authApplePay = async (instance: Client): Promise<ApplePay> => {

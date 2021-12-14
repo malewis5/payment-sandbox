@@ -12,6 +12,7 @@ function App() {
   const { clientInstance, serverError, isLoading } = GenerateClientToken(
     "https://payment-microservice.ngrok.io/client-token"
   );
+
   const isSupported = IsApplePaySupported();
 
   const handleShipping = (e: any) => {
@@ -58,6 +59,7 @@ function App() {
               {isSupported && (
                 <ApplePayButton
                   onPaymentSuccess={() => {}}
+                  onPaymentError={() => {}}
                   payment={{ subtotal: amount ?? "" }}
                   storeName="Sandbox Demo"
                   client={clientInstance}
