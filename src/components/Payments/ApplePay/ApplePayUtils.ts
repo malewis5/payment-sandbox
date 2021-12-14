@@ -15,6 +15,8 @@ export const authApplePay = async (instance: Client): Promise<ApplePay> => {
   return applePayInstance;
 };
 
+// Create line items for Payment Sheet
+//TODO: Make this more performant
 export const createLineItems = (
   subtotal: string,
   shipping?: string,
@@ -40,41 +42,6 @@ export const createLineItems = (
   return lineItems;
 };
 
-export const createPaymentRequest = (
-  subtotal: string,
-  storeName: string,
-  applePayInstance: ApplePay,
-  shipping?: string,
-  shippingMethods?: Array<ApplePayJS.ApplePayShippingMethod>,
-  tax?: string
-): ApplePayJS.ApplePayPaymentRequest => {
-  if (applePayInstance) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    const paymentRequest: ApplePayJS.ApplePayPayment =
-      applePayInstance.createPaymentRequest({
-        total: {
-          label: storeName,
-          amount: calculateApplePayTotal(subtotal, shipping, tax),
-        },
-        //@ts-ignore
-        lineItems: createLineItems(subtotal, shipping, shippingMethods, tax),
-        shippingMethods: shippingMethods,
-        requiredBillingContactFields: ["postalAddress"],
-        requiredShippingContactFields: [
-          "postalAddress",
-          "name",
-          "phone",
-          "email",
-        ],
-      });
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    return paymentRequest;
-  } else throw Error("Apple pay instance not authorized");
-};
-
 export const calculateApplePayTotal = (
   subtotal: string,
   shipping?: string,
@@ -86,13 +53,42 @@ export const calculateApplePayTotal = (
   return (subtotalFloat + shippingFloat + taxFloat).toString();
 };
 
+export const createPaymentRequest = (
+  subtotal: string,
+  storeName: string,
+  applePayInstance: ApplePay,
+  shipping?: string,
+  shippingMethods?: Array<ApplePayJS.ApplePayShippingMethod>,
+  tax?: string
+): ApplePayJS.ApplePayPaymentRequest => {
+  if (applePayInstance) {
+    const paymentRequest = applePayInstance.createPaymentRequest({
+      total: {
+        label: storeName,
+        amount: calculateApplePayTotal(subtotal, shipping, tax),
+      },
+      //@ts-ignore
+      lineItems: createLineItems(subtotal, shipping, shippingMethods, tax),
+      shippingMethods: shippingMethods,
+      requiredBillingContactFields: ["postalAddress"],
+      requiredShippingContactFields: [
+        "postalAddress",
+        "name",
+        "phone",
+        "email",
+      ],
+    });
+    return paymentRequest;
+  } else throw Error("Apple pay instance not authorized");
+};
+
 export const createApplePaySession = (
   paymentRequest: ApplePayJS.ApplePayPaymentRequest,
   applePayInstance: ApplePay,
   onPaymentSuccess: (response: any) => void,
+  onPaymentError: (e: any) => void,
   shippingHandler?: shippingHandlerFunction,
   taxHandler?: taxHandlerFunction
-  // shippingMethods?: Array<ApplePayJS.ApplePayShippingMethod>,
 ): void => {
   const session: ApplePaySession = new (
     window as unknown as ApplePayJS.ApplePayWindow
@@ -110,6 +106,7 @@ export const createApplePaySession = (
         function (err, merchantSession) {
           if (err) {
             session.abort();
+            onPaymentError(err);
             throw Error(err.message);
           }
           session.completeMerchantValidation(merchantSession);
@@ -128,6 +125,7 @@ export const createApplePaySession = (
         },
         function (tokenizeErr, payload) {
           if (tokenizeErr) {
+            onPaymentError(tokenizeErr);
             session.completePayment(
               (window as unknown as ApplePayJS.ApplePayWindow).ApplePaySession
                 .STATUS_FAILURE
@@ -161,6 +159,7 @@ export const createApplePaySession = (
                 );
                 onPaymentSuccess(response);
               } else {
+                onPaymentError(response);
                 session.completePayment(
                   (window as unknown as ApplePayJS.ApplePayWindow)
                     .ApplePaySession.STATUS_FAILURE
@@ -175,14 +174,6 @@ export const createApplePaySession = (
     } else throw Error("No apple pay instance.");
   };
 
-  // This is called when a user selects a shipping method. Use this to update cart totals.
-  // Make sure to update paymentRequest with any changes.
-  // if (shippingHandler) {
-  //   session.onshippingmethodselected = function(event: ApplePayJS.ApplePayShippingMethodSelectedEvent) {
-  //     const update: ApplePayJS.ApplePayShippingMethodUpdate = shippingHandler(event, paymentRequest)
-  //     session.completeShippingMethodSelection(update)
-  //   }
-  // }
   if (shippingHandler) {
     session.onshippingmethodselected = function (
       event: ApplePayJS.ApplePayShippingMethodSelectedEvent

@@ -1,6 +1,5 @@
 import { ApplePay, Client } from "braintree-web";
 import * as React from "react";
-
 import "./ApplePayButton.scss";
 import {
   authApplePay,
@@ -21,38 +20,14 @@ export type taxHandlerFunction = (
   event: ApplePayJS.ApplePayShippingContactSelectedEvent
 ) => string;
 
-/**
- * Create your shippingHandler function here
- * This function is called when the user selects a shipping method. You can provide static options or create a function that calculates dynamic values
- * If the shipping cost is known before the payment sheet is presented, pass it into the payment prop
- * It must return an update that matches the ApplePayShippingMethodUpdate
- */
-
-/**
- * Create your taxHandler function here
- * This function is called when the payment sheet first opens and if the user changes their shipping address.
- * If tax is known before the payment sheet is presented, pass it into the payment prop
- * It must return an update that matches the ApplePayShippingContactUpdate
- */
-
-// const taxHandler = (event) => {}
-
-/**
- * Create your onPaymentSuccess function here
- * This function is called when the payment is successful. For example, create a function that redirects the user
- * to the order confirmation screen
- */
-
-// const onPaymentSuccess = () => {}
-
 const handleApplePayClick = (
   applePayInstance: ApplePay | undefined,
   payment: Payment,
   storeName: string,
   onPaymentSuccess: (response: any) => void,
+  onPaymentError: (e: any) => void,
   shippingHandler?: shippingHandlerFunction,
   taxHandler?: taxHandlerFunction,
-
   shippingMethods?: Array<ApplePayJS.ApplePayShippingMethod>
 ) => {
   const { subtotal, tax, shipping } = payment;
@@ -71,16 +46,18 @@ const handleApplePayClick = (
         paymentRequest,
         applePayInstance,
         onPaymentSuccess,
+        onPaymentError,
         shippingHandler,
         taxHandler
         // shippingMethods,
       );
     }
-  } else throw new Error("No apple pay instance.");
+  } else throw new Error("Error creating Payment Request");
 };
 
 interface IApplePayButton {
   onPaymentSuccess: (response: any) => void;
+  onPaymentError: (e: any) => void;
   client?: Client;
   payment: Payment;
   storeName: string;
@@ -114,6 +91,7 @@ const ApplePayButton: React.FC<IApplePayButton> = ({
   payment,
   storeName,
   onPaymentSuccess,
+  onPaymentError,
   taxHandler,
   client,
   shippingHandler,
@@ -140,6 +118,7 @@ const ApplePayButton: React.FC<IApplePayButton> = ({
           payment,
           storeName,
           onPaymentSuccess,
+          onPaymentError,
           shippingHandler,
           taxHandler,
           shippingMethods

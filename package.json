@@ -15,7 +15,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://www.revcommerce.ngrok.io",
   "eslintConfig": {
     "extends": "react-app"
   },
