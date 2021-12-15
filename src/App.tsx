@@ -26,15 +26,26 @@ function App() {
       }),
     };
     const fetchShippingOptions = await fetch(
-      "https://payment-microservice.ngrok.io/get-mock-taxShip",
+      "https://payment-microservice.ngrok.io/get-mock-ship",
       requestOptions
     ).then((data: any) => data.json());
-    console.log(fetchShippingOptions);
     return fetchShippingOptions;
   };
 
   const handleTax = async (e: any): Promise<string> => {
-    return "3.26";
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        shippingContact: e?.shippingContact ?? "",
+      }),
+    };
+    const fetchTax = await fetch(
+      "https://payment-microservice.ngrok.io/get-mock-tax",
+      requestOptions
+    ).then((data: any) => data.json());
+    console.log(fetchTax);
+    return fetchTax;
   };
 
   return (
