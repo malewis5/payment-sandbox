@@ -50,7 +50,7 @@ export const calculateApplePayTotal = (
   const subtotalFloat = parseFloat(subtotal) ?? "0";
   const shippingFloat = parseFloat(shipping ?? "0") ?? "0";
   const taxFloat = parseFloat(tax ?? "0") ?? "0";
-  return (subtotalFloat + shippingFloat + taxFloat).toString();
+  return (subtotalFloat + shippingFloat + taxFloat).toFixed(2).toString();
 };
 
 export const createPaymentRequest = (
