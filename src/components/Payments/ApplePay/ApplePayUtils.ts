@@ -88,7 +88,8 @@ export const createApplePaySession = (
   onPaymentSuccess: (response: any) => void,
   onPaymentError: (e: any) => void,
   shippingHandler?: shippingHandlerFunction,
-  taxHandler?: taxHandlerFunction
+  taxHandler?: taxHandlerFunction,
+  shippingMethods?: ApplePayJS.ApplePayShippingMethod[]
 ): void => {
   const session: ApplePaySession = new (
     window as unknown as ApplePayJS.ApplePayWindow
@@ -174,7 +175,7 @@ export const createApplePaySession = (
     } else throw Error("No apple pay instance.");
   };
 
-  if (shippingHandler) {
+  if (shippingHandler || shippingMethods) {
     session.onshippingmethodselected = function (
       event: ApplePayJS.ApplePayShippingMethodSelectedEvent
     ) {
@@ -207,14 +208,14 @@ export const createApplePaySession = (
   // If user has shipping selected, this is called as soon as the payment sheet is presented. Otherwise it's called when the user selects an address.
   // This is where we calculate taxes.
   if (shippingHandler || taxHandler) {
-    session.onshippingcontactselected = function (
+    session.onshippingcontactselected = async function (
       event: ApplePayJS.ApplePayShippingContactSelectedEvent
     ) {
-      const shippingMethods = shippingHandler
-        ? shippingHandler(event)
-        : undefined;
-      const shipping = shippingMethods?.[0]?.amount ?? "0";
-      const tax = taxHandler ? taxHandler(event) : "0";
+      const updatedShippingMethods = shippingHandler
+        ? await shippingHandler(event)
+        : shippingMethods;
+      const shipping = updatedShippingMethods?.[0]?.amount ?? "0";
+      const tax = taxHandler ? await taxHandler(event) : "0";
 
       const prevSubtotal = paymentRequest?.lineItems?.[0]?.amount ?? "0";
       const newTotal = {
@@ -224,11 +225,11 @@ export const createApplePaySession = (
 
       const update: ApplePayJS.ApplePayShippingContactUpdate = {
         newTotal: newTotal,
-        newShippingMethods: shippingMethods,
+        newShippingMethods: updatedShippingMethods,
         newLineItems: createLineItems(
           prevSubtotal,
           shipping,
-          shippingMethods,
+          updatedShippingMethods,
           tax
         ),
       };

@@ -40,7 +40,7 @@ export type Payment = {
 
 export type shippingHandlerFunction = (
   event: ApplePayJS.ApplePayShippingContactSelectedEvent
-) => ApplePayJS.ApplePayShippingMethod[];
+) => Promise<ApplePayJS.ApplePayShippingMethod[]>;
 export type taxHandlerFunction = (
   event: ApplePayJS.ApplePayShippingContactSelectedEvent
-) => string;
+) => Promise<string>;

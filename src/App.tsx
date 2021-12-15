@@ -15,28 +15,25 @@ function App() {
 
   const isSupported = IsApplePaySupported();
 
-  const handleShipping = (e: any) => {
-    let price = "0";
-    if (e.shippingContact.administrativeArea === "FL") {
-      price = "2.99";
-    }
-    return [
-      {
-        label: "Free Shipping",
-        detail: "5-7 days",
-        amount: "0",
-        identifier: "FreeShip",
-      },
-      {
-        label: "Expedited Shipping",
-        detail: "2 days",
-        amount: price,
-        identifier: "ExpShip",
-      },
-    ];
+  const handleShipping = async (
+    e: ApplePayJS.ApplePayShippingContactSelectedEvent
+  ): Promise<ApplePayJS.ApplePayShippingMethod[]> => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        shippingContact: e?.shippingContact ?? "",
+      }),
+    };
+    const fetchShippingOptions = await fetch(
+      "https://payment-microservice.ngrok.io/get-mock-taxShip",
+      requestOptions
+    ).then((data: any) => data.json());
+    console.log(fetchShippingOptions);
+    return fetchShippingOptions;
   };
 
-  const handleTax = (e: any) => {
+  const handleTax = async (e: any): Promise<string> => {
     return "3.26";
   };
 

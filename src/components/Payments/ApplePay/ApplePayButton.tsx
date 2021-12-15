@@ -41,8 +41,8 @@ const handleApplePayClick = (
         onPaymentSuccess,
         onPaymentError,
         shippingHandler,
-        taxHandler
-        // shippingMethods,
+        taxHandler,
+        shippingMethods
       );
     }
   } else throw new Error("Error creating Payment Request");
