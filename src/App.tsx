@@ -1,14 +1,12 @@
 import "./App.scss";
 import { PayPalButton } from "@peakactivity/revcom-payment-components";
 import React from "react";
-import SubmitButton from "./components/SubmitButton";
 import { GenerateClientToken } from "@peakactivity/revcom-payment-components";
 import { IsApplePaySupported } from "@peakactivity/revcom-payment-components";
 import { ApplePayButton } from "@peakactivity/revcom-payment-components";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("1");
-  const [payload, setPayload] = React.useState<any>("");
   const { clientInstance, serverError, isLoading } = GenerateClientToken(
     "https://payment-microservice.ngrok.io/client-token"
   );
@@ -76,13 +74,7 @@ function App() {
                 />
               )}
 
-              <PayPalButton
-                client={clientInstance}
-                amount={amount}
-                setPayload={setPayload}
-              />
-
-              <SubmitButton payload={payload} setPayload={setPayload} />
+              <PayPalButton client={clientInstance} amount={amount} />
             </>
           )}
         </div>
