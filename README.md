@@ -26,7 +26,7 @@ ngrok http --region=us --hostname=payment-microservice.ngrok.io 8082
 ```
 **Note:** Instructions for setting up the payment microservice can be found <a href="https://github.com/PeakActivity/revcommerce-payment-ms" target="_blank" rel="noreferrer noopener">here</a>.
 
-5. The sandbox is now <a href="https://revcommerce.ngrok.io/" alt="RevCommerce Payments Sandbox" target="_blank" rel="noreferrer noopener">live</a> ✨. 
+5. The sandbox is now live at https://revcommerce.ngrok.io ✨. 
 
 ## Support
 For questions regarding the sandbox reach out to [Matthew Lewis](mailto:mlewis@peakactivity.com "Send email to Matthew Lewis").
