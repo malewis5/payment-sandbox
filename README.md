@@ -12,7 +12,7 @@ git clone https://github.com/malewis5/payment-sandbox.git
 2. Navigate your terminal to the new directory and install dependencies.
 
 ```console
-cd payment-sandox 
+cd payment-sandbox 
 npm install
 ```
 3. Use ngrok to run using HTTPS.
