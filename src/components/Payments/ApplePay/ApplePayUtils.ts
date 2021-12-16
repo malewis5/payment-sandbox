@@ -78,6 +78,7 @@ export const createPaymentRequest = (
         "email",
       ],
     });
+    //@ts-ignore
     return paymentRequest;
   } else throw Error("Apple pay instance not authorized");
 };
@@ -91,9 +92,11 @@ export const createApplePaySession = (
   taxHandler?: taxHandlerFunction,
   shippingMethods?: ApplePayJS.ApplePayShippingMethod[]
 ): void => {
-  const session: ApplePaySession = new (
-    window as unknown as ApplePayJS.ApplePayWindow
-  ).ApplePaySession(3, paymentRequest);
+  const session: ApplePaySession = new //@ts-ignore
+  (window as unknown as ApplePayJS.ApplePayWindow).ApplePaySession(
+    3,
+    paymentRequest
+  );
 
   session.onvalidatemerchant = function (
     event: ApplePayJS.ApplePayValidateMerchantEvent
@@ -128,6 +131,7 @@ export const createApplePaySession = (
           if (tokenizeErr) {
             onPaymentError(tokenizeErr);
             session.completePayment(
+              //@ts-ignore
               (window as unknown as ApplePayJS.ApplePayWindow).ApplePaySession
                 .STATUS_FAILURE
             );
@@ -155,6 +159,7 @@ export const createApplePaySession = (
             ).then((response) => {
               if (response.status === 200) {
                 session.completePayment(
+                  //@ts-ignore
                   (window as unknown as ApplePayJS.ApplePayWindow)
                     .ApplePaySession.STATUS_SUCCESS
                 );
@@ -162,6 +167,7 @@ export const createApplePaySession = (
               } else {
                 onPaymentError(response);
                 session.completePayment(
+                  //@ts-ignore
                   (window as unknown as ApplePayJS.ApplePayWindow)
                     .ApplePaySession.STATUS_FAILURE
                 );
@@ -272,9 +278,8 @@ export const IsApplePaySetup: () => boolean | undefined = () => {
   React.useEffect(() => {
     const checkIsSetup = () => {
       //TODO: Merchant ID env variable
-      return (
-        window as unknown as ApplePayJS.ApplePayWindow
-      ).ApplePaySession.canMakePaymentsWithActiveCard(
+      //@ts-ignore
+      return window.ApplePaySession.canMakePaymentsWithActiveCard(
         "merchant.revcommerce.com"
       );
     };
