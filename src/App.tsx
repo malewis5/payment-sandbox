@@ -86,7 +86,9 @@ function App() {
             </>
           )}
         </div>
-        {serverError && <p className="error">Error connecting to server</p>}
+        {serverError && (
+          <p className="error">Error connecting to payment microservice</p>
+        )}
       </header>
     </div>
   );
