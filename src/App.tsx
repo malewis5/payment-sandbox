@@ -1,10 +1,10 @@
 import "./App.scss";
-import { PayPalButton } from "./components/Payments/PayPal/PayPalButton";
+import { PayPalButton } from "@peakactivity/revcom-payment-components";
 import React from "react";
 import SubmitButton from "./components/SubmitButton";
-import { GenerateClientToken } from "./components/Payments/Braintree/braintreeHooks";
-import { IsApplePaySupported } from "./components/Payments/ApplePay/ApplePayUtils";
-import { ApplePayButton } from "./components/Payments/ApplePay/ApplePayButton";
+import { GenerateClientToken } from "@peakactivity/revcom-payment-components";
+import { IsApplePaySupported } from "@peakactivity/revcom-payment-components";
+import { ApplePayButton } from "@peakactivity/revcom-payment-components";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("1");
