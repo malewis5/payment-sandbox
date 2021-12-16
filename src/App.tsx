@@ -81,9 +81,10 @@ function App() {
                 amount={amount}
                 setPayload={setPayload}
               />
+
+              <SubmitButton payload={payload} setPayload={setPayload} />
             </>
           )}
-          <SubmitButton payload={payload} setPayload={setPayload} />
         </div>
         {serverError && <p className="error">Error connecting to server</p>}
       </header>
