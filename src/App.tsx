@@ -1,5 +1,8 @@
 import "./App.scss";
-import { PayPalButton } from "@peakactivity/revcom-payment-components";
+import {
+  ApplePayButtonLabel,
+  PayPalButton,
+} from "@peakactivity/revcom-payment-components";
 import React from "react";
 import { GenerateClientToken } from "@peakactivity/revcom-payment-components";
 import { IsApplePaySupported } from "@peakactivity/revcom-payment-components";
@@ -71,7 +74,7 @@ function App() {
                   client={clientInstance}
                   shippingHandler={handleShipping}
                   taxHandler={handleTax}
-                  // buttonType={ApplePayButtonLabel.checkout}
+                  buttonType={ApplePayButtonLabel.checkout}
                 />
               )}
 
