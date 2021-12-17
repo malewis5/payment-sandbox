@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@peakactivity/revcom-payment-components": "file:revcom-payment-components-1.0.0-npm.tgz",
+    "@peakactivity/revcom-payment-components": "file:../revcom-payment-components",
     "@types/applepayjs": "^3.0.2",
     "braintree-web": "^3.84.0",
     "react": "^17.0.2",

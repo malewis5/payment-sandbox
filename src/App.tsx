@@ -71,6 +71,7 @@ function App() {
                   client={clientInstance}
                   shippingHandler={handleShipping}
                   taxHandler={handleTax}
+                  // buttonType={ApplePayButtonLabel.checkout}
                 />
               )}
 
