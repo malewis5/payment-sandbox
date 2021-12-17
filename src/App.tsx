@@ -1,12 +1,12 @@
 import "./App.scss";
-import {
-  ApplePayButtonLabel,
-  PayPalButton,
-} from "@peakactivity/revcom-payment-components";
 import React from "react";
-import { useGenerateClientToken } from "@peakactivity/revcom-payment-components";
-import { IsApplePaySupported } from "@peakactivity/revcom-payment-components";
-import { ApplePayButton } from "@peakactivity/revcom-payment-components";
+import {
+  useGenerateClientToken,
+  IsApplePaySupported,
+  ApplePayButton,
+  PayPalButton,
+  ApplePayButtonLabel,
+} from "@peakactivity/revcom-payment-components";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("1");
@@ -16,9 +16,7 @@ function App() {
 
   const isSupported = IsApplePaySupported();
 
-  const handleShipping = async (
-    e: ApplePayJS.ApplePayShippingContactSelectedEvent
-  ): Promise<ApplePayJS.ApplePayShippingMethod[]> => {
+  const handleShipping = async (e: any): Promise<any> => {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
