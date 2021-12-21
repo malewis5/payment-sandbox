@@ -7,6 +7,7 @@ import {
   PayPalButton,
   ApplePayButtonLabel,
 } from "@peakactivity/revcom-payment-components";
+import "@peakactivity/revcom-payment-components/lib/index.css";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("1");
