@@ -11,9 +11,7 @@ import "@peakactivity/revcom-payment-components/lib/index.css";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("1");
-  const { clientInstance, serverError, isLoading } = useGenerateClientToken(
-    "https://payment-microservice.ngrok.io/client-token"
-  );
+  const { clientInstance, serverError, isLoading } = useGenerateClientToken();
 
   const isSupported = IsApplePaySupported();
 
@@ -26,7 +24,7 @@ function App() {
       }),
     };
     const fetchShippingOptions = await fetch(
-      "https://payment-microservice.ngrok.io/get-mock-ship",
+      `${process.env.REACT_APP_PAYMENT_MS_ENDPOINT}/get-mock-ship`,
       requestOptions
     ).then((data: any) => data.json());
     return fetchShippingOptions;
@@ -41,7 +39,7 @@ function App() {
       }),
     };
     const fetchTax = await fetch(
-      "https://payment-microservice.ngrok.io/get-mock-tax",
+      `${process.env.REACT_APP_PAYMENT_MS_ENDPOINT}/get-mock-tax`,
       requestOptions
     ).then((data: any) => data.json());
     console.log(fetchTax);
@@ -55,6 +53,8 @@ function App() {
           <p>Amount must be greater than $0</p>
           <input
             type="number"
+            pattern="[0-9]*"
+            min="2"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
