@@ -8,6 +8,7 @@ import {
   ApplePayButtonLabel,
 } from "@peakactivity/revcom-payment-components";
 import "@peakactivity/revcom-payment-components/lib/index.css";
+import { PAYMENT_MS_ENDPOINT } from "./env";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("1");
@@ -24,7 +25,7 @@ function App() {
       }),
     };
     const fetchShippingOptions = await fetch(
-      `${process.env.REACT_APP_PAYMENT_MS_ENDPOINT}/get-mock-ship`,
+      `${PAYMENT_MS_ENDPOINT}/get-mock-ship`,
       requestOptions
     ).then((data: any) => data.json());
     return fetchShippingOptions;
@@ -39,7 +40,7 @@ function App() {
       }),
     };
     const fetchTax = await fetch(
-      `${process.env.REACT_APP_PAYMENT_MS_ENDPOINT}/get-mock-tax`,
+      `${PAYMENT_MS_ENDPOINT}/get-mock-tax`,
       requestOptions
     ).then((data: any) => data.json());
     console.log(fetchTax);
