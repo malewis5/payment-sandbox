@@ -79,6 +79,7 @@ function App() {
               )}
 
               <PayPalButton client={clientInstance} amount={amount} />
+              <button className="checkout-button">Submit Order</button>
             </>
           )}
         </div>
