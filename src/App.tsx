@@ -76,7 +76,7 @@ function App() {
                   shippingHandler={handleShipping}
                   taxHandler={handleTax}
                   buttonType={ApplePayButtonLabel.buy}
-                  buttonColor={ApplePayColorLabel.black}
+                  buttonColor={ApplePayColorLabel.white}
                 />
               )}
 
