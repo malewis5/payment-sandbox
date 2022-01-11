@@ -19,6 +19,9 @@
 
 .button-container {
   width: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .error {

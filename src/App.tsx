@@ -6,6 +6,7 @@ import {
   ApplePayButton,
   PayPalButton,
   ApplePayButtonLabel,
+  ApplePayColorLabel,
 } from "@peakactivity/revcom-payment-components";
 import "@peakactivity/revcom-payment-components/lib/index.css";
 import { PAYMENT_MS_ENDPOINT } from "./env";
@@ -74,7 +75,8 @@ function App() {
                   client={clientInstance}
                   shippingHandler={handleShipping}
                   taxHandler={handleTax}
-                  buttonType={ApplePayButtonLabel.checkout}
+                  buttonType={ApplePayButtonLabel.buy}
+                  buttonColor={ApplePayColorLabel.black}
                 />
               )}
 
