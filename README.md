@@ -25,11 +25,6 @@ npm start
 ```console
 ngrok http --region=us --hostname=revcommerce.ngrok.io 3000
 ```
-5. Start the payment microservice using ngrok and HTTPS.
-```console
-ngrok http --region=us --hostname=payment-microservice.ngrok.io 8082
-```
-**Note:** Instructions for setting up the payment microservice can be found [here](https://github.com/PeakActivity/revcommerce-payment-ms "RevCommerce Payments Microservice").
 
 6. The sandbox is now live at https://revcommerce.ngrok.io ✨. 
 
