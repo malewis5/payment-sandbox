@@ -7,6 +7,9 @@ import {
   PayPalButton,
   ApplePayButtonLabel,
   ApplePayColorLabel,
+  PayPalButtonColor,
+  PayPalButtonLabel,
+  PayPalButtonShape,
 } from "@peakactivity/revcom-payment-components";
 import "@peakactivity/revcom-payment-components/lib/index.css";
 import { PAYMENT_MS_ENDPOINT } from "./env";
@@ -80,7 +83,14 @@ function App() {
                 />
               )}
 
-              <PayPalButton client={clientInstance} amount={amount} />
+              <PayPalButton
+                client={clientInstance}
+                amount={amount}
+                color={PayPalButtonColor.blue}
+                label={PayPalButtonLabel.pay}
+                shape={PayPalButtonShape.rect}
+                height={30}
+              />
               <button className="checkout-button">Submit Order</button>
             </>
           )}
