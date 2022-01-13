@@ -126,7 +126,31 @@ function App() {
                   ];
                   return shippingOptions;
                 }}
-                taxHandler={async () => "2"}
+                taxHandler={async (data, amount, shipping) => {
+                  var myHeaders = new Headers();
+                  myHeaders.append("Content-Type", "application/json");
+
+                  var raw = JSON.stringify({
+                    shipping: shipping,
+                    amount: amount,
+                    to_zip: data.shipping_address.postal_code,
+                    to_state: data.shipping_address.state,
+                  });
+
+                  var requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw,
+                  };
+                  const tax = await fetch(
+                    "http://localhost:8001/taxes",
+                    requestOptions
+                  )
+                    .then((res) => res.json())
+                    .then((data) => data.taxAmount.toString());
+
+                  return tax;
+                }}
               />
               <button className="checkout-button">Submit Order</button>
             </>
