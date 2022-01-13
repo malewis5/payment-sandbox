@@ -20,7 +20,7 @@ function App() {
 
   const isSupported = IsApplePaySupported();
 
-  const handleShipping = async (e: any): Promise<any> => {
+  const handleShipping = async (e: any): Promise<[]> => {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -47,7 +47,7 @@ function App() {
       `${PAYMENT_MS_ENDPOINT}/get-mock-tax`,
       requestOptions
     ).then((data: any) => data.json());
-    console.log(fetchTax);
+
     return fetchTax;
   };
 
@@ -86,10 +86,47 @@ function App() {
               <PayPalButton
                 client={clientInstance}
                 amount={amount}
-                color={PayPalButtonColor.blue}
-                label={PayPalButtonLabel.pay}
+                color={PayPalButtonColor.gold}
+                label={PayPalButtonLabel.checkout}
                 shape={PayPalButtonShape.rect}
                 height={30}
+                //@ts-ignore
+                shippingHandler={async () => {
+                  const shippingOptions = [
+                    {
+                      id: "SHIP_123",
+                      label: "Free Shipping",
+                      type: "SHIPPING",
+                      selected: true,
+                      amount: {
+                        value: "0.00",
+                        currency: "USD",
+                      },
+                    },
+                    {
+                      id: "SHIP_456",
+                      label: "Pick up in Store",
+                      type: "PICKUP",
+                      selected: false,
+                      amount: {
+                        value: "0.00",
+                        currency: "USD",
+                      },
+                    },
+                    {
+                      id: "SHIP_789",
+                      label: "Expedited Shipping",
+                      type: "SHIPPING",
+                      selected: false,
+                      amount: {
+                        value: "9.99",
+                        currency: "USD",
+                      },
+                    },
+                  ];
+                  return shippingOptions;
+                }}
+                taxHandler={async () => "2"}
               />
               <button className="checkout-button">Submit Order</button>
             </>
