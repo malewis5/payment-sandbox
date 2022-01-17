@@ -42,10 +42,15 @@ function App() {
                 <ApplePayButton
                   onPaymentSuccess={() => {}}
                   onPaymentError={() => {}}
-                  payment={{ subtotal: amount ?? "" }}
+                  payment={{
+                    subtotal: amount ?? "",
+                    tax: "1",
+                    shipping: "0.99",
+                  }}
                   storeName="Sandbox Demo"
                   client={clientInstance}
                   shippingHandler={appleShipping}
+                  //@ts-ignore
                   taxHandler={appleTax}
                   buttonType={ApplePayButtonLabel.buy}
                   buttonColor={ApplePayColorLabel.white}
