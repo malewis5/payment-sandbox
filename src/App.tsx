@@ -12,44 +12,13 @@ import {
   PayPalButtonShape,
 } from "@peakactivity/revcom-payment-components";
 import "@peakactivity/revcom-payment-components/lib/index.css";
-import { PAYMENT_MS_ENDPOINT } from "./env";
+import { appleShipping, payPalShipping } from "./utils/shipping";
+import { appleTax, payPalTax } from "./utils/tax";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("1");
   const { clientInstance, serverError, isLoading } = useGenerateClientToken();
-
   const isSupported = IsApplePaySupported();
-
-  const handleShipping = async (e: any): Promise<[]> => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        shippingContact: e?.shippingContact ?? "",
-      }),
-    };
-    const fetchShippingOptions = await fetch(
-      `${PAYMENT_MS_ENDPOINT}/get-mock-ship`,
-      requestOptions
-    ).then((data: any) => data.json());
-    return fetchShippingOptions;
-  };
-
-  const handleTax = async (e: any): Promise<string> => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        shippingContact: e?.shippingContact ?? "",
-      }),
-    };
-    const fetchTax = await fetch(
-      `${PAYMENT_MS_ENDPOINT}/get-mock-tax`,
-      requestOptions
-    ).then((data: any) => data.json());
-
-    return fetchTax;
-  };
 
   return (
     <div className="App">
@@ -76,8 +45,8 @@ function App() {
                   payment={{ subtotal: amount ?? "" }}
                   storeName="Sandbox Demo"
                   client={clientInstance}
-                  shippingHandler={handleShipping}
-                  taxHandler={handleTax}
+                  shippingHandler={appleShipping}
+                  taxHandler={appleTax}
                   buttonType={ApplePayButtonLabel.buy}
                   buttonColor={ApplePayColorLabel.white}
                 />
@@ -91,66 +60,8 @@ function App() {
                 shape={PayPalButtonShape.rect}
                 height={30}
                 //@ts-ignore
-                shippingHandler={async () => {
-                  const shippingOptions = [
-                    {
-                      id: "SHIP_123",
-                      label: "Free Shipping",
-                      type: "SHIPPING",
-                      selected: true,
-                      amount: {
-                        value: "0.00",
-                        currency: "USD",
-                      },
-                    },
-                    {
-                      id: "SHIP_456",
-                      label: "Pick up in Store",
-                      type: "PICKUP",
-                      selected: false,
-                      amount: {
-                        value: "0.00",
-                        currency: "USD",
-                      },
-                    },
-                    {
-                      id: "SHIP_789",
-                      label: "Expedited Shipping",
-                      type: "SHIPPING",
-                      selected: false,
-                      amount: {
-                        value: "9.99",
-                        currency: "USD",
-                      },
-                    },
-                  ];
-                  return shippingOptions;
-                }}
-                taxHandler={async (data, amount, shipping) => {
-                  var myHeaders = new Headers();
-                  myHeaders.append("Content-Type", "application/json");
-
-                  var raw = JSON.stringify({
-                    shipping: shipping,
-                    amount: amount,
-                    to_zip: data.shipping_address.postal_code,
-                    to_state: data.shipping_address.state,
-                  });
-
-                  var requestOptions = {
-                    method: "POST",
-                    headers: myHeaders,
-                    body: raw,
-                  };
-                  const tax = await fetch(
-                    "http://localhost:8001/taxes",
-                    requestOptions
-                  )
-                    .then((res) => res.json())
-                    .then((data) => data.taxAmount.toString());
-
-                  return tax;
-                }}
+                shippingHandler={payPalShipping}
+                taxHandler={payPalTax}
               />
               <button className="checkout-button">Submit Order</button>
             </>
