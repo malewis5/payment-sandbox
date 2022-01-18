@@ -24,3 +24,4 @@ yarn-error.log*
 .npmrc
 node_modules
 taxjar/.env
+.env
