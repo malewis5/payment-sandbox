@@ -40,8 +40,12 @@ function App() {
             <>
               {isSupported && (
                 <ApplePayButton
-                  onPaymentSuccess={() => {}}
-                  onPaymentError={() => {}}
+                  onPaymentSuccess={(res) => {
+                    console.log(res.json());
+                  }}
+                  onPaymentError={(e) => {
+                    console.log(e);
+                  }}
                   payment={{
                     subtotal: amount ?? "",
                     tax: "1",
