@@ -7,7 +7,7 @@ interface IPayPalButton {
 
 const intitialOptions = {
   "client-id":
-    "AdrYZr9lTI-NgfuARhzrDXmAzoiUUpg__do8aU1fsY_4dtLoxngGB_PMgNRpRj6qroqN5JDw3jOXvQvF",
+    "ARA8IyE2GN8PzkiPREtapt9ej1nLeUD-Qeb9sZsfmbmRL-uEd3Nl1oC_a-L1BD7DPSXc_b6uEJmBGvVf",
   currency: "USD",
   intent: "capture",
   "disable-funding": "card,credit",
@@ -29,7 +29,7 @@ export const PayPalButton: React.FC<IPayPalButton> = ({ amount, style }) => {
 
   const onApprove = (data: any, actions: any) => {
     return actions.order.capture().then((details: any) => {
-      console.log(`Details: ${details}`);
+      console.log(details);
     });
   };
 
