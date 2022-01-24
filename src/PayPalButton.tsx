@@ -1,4 +1,5 @@
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { payPalShipping } from "./utils/shipping";
 
 interface IPayPalButton {
   amount: string;
@@ -15,12 +16,16 @@ const intitialOptions = {
 };
 
 export const PayPalButton: React.FC<IPayPalButton> = ({ amount, style }) => {
-  const createOrder = (data: any, actions: any) => {
+  const createOrder = async (data: any, actions: any) => {
     return actions.order.create({
       purchase_units: [
         {
           amount: {
             value: amount,
+            currency_code: "USD",
+          },
+          shipping: {
+            options: await payPalShipping(),
           },
         },
       ],
@@ -33,7 +38,31 @@ export const PayPalButton: React.FC<IPayPalButton> = ({ amount, style }) => {
     });
   };
 
-  const onShippingChange = async (data: any, actions: any) => {};
+  const onShippingChange = async (data: any, actions: any): Promise<void> => {
+    const shippingAmount = data.selected_shipping_option.amount.value;
+    return actions.order.patch([
+      {
+        op: "replace",
+        path: "/purchase_units/@reference_id=='default'/amount",
+        value: {
+          currency_code: "USD",
+          value: (
+            parseFloat(amount ?? "") + parseFloat(shippingAmount)
+          ).toFixed(2),
+          breakdown: {
+            item_total: {
+              currency_code: "USD",
+              value: amount,
+            },
+            shipping: {
+              currency_code: "USD",
+              value: shippingAmount,
+            },
+          },
+        },
+      },
+    ]);
+  };
 
   const onCancel = (data: any, actions: any) => {
     console.log("PayPal payment cancelled", JSON.stringify(data));

@@ -8,28 +8,18 @@ export const payPalShipping = async () => {
       type: "SHIPPING",
       selected: true,
       amount: {
-        value: "0.00",
-        currency: "USD",
+        value: "3.00",
+        currency_code: "USD",
       },
     },
     {
       id: "SHIP_456",
-      label: "Pick up in Store",
-      type: "PICKUP",
-      selected: false,
-      amount: {
-        value: "0.00",
-        currency: "USD",
-      },
-    },
-    {
-      id: "SHIP_789",
       label: "Expedited Shipping",
       type: "SHIPPING",
       selected: false,
       amount: {
         value: "9.99",
-        currency: "USD",
+        currency_code: "USD",
       },
     },
   ];
