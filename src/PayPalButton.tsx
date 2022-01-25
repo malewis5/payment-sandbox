@@ -1,4 +1,5 @@
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { PAYPAL_CLIENT_ID } from "./env";
 import { payPalShipping } from "./utils/shipping";
 
 interface IPayPalButton {
@@ -8,8 +9,7 @@ interface IPayPalButton {
 }
 
 const intitialOptions = {
-  "client-id":
-    "ARA8IyE2GN8PzkiPREtapt9ej1nLeUD-Qeb9sZsfmbmRL-uEd3Nl1oC_a-L1BD7DPSXc_b6uEJmBGvVf",
+  "client-id": PAYPAL_CLIENT_ID,
   currency: "USD",
   intent: "capture",
   "disable-funding": "card,credit",
