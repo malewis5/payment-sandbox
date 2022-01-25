@@ -4,6 +4,7 @@ import { payPalShipping } from "./utils/shipping";
 interface IPayPalButton {
   amount: string;
   style: any;
+  setCustomerDetails: React.Dispatch<React.SetStateAction<undefined>>;
 }
 
 const intitialOptions = {
@@ -12,29 +13,54 @@ const intitialOptions = {
   currency: "USD",
   intent: "capture",
   "disable-funding": "card,credit",
-  "enable-funding": "venmo",
 };
 
-export const PayPalButton: React.FC<IPayPalButton> = ({ amount, style }) => {
+export const PayPalButton: React.FC<IPayPalButton> = ({
+  amount,
+  style,
+  setCustomerDetails,
+}) => {
   const createOrder = async (data: any, actions: any) => {
+    const shippingOptions = await payPalShipping();
     return actions.order.create({
       purchase_units: [
         {
           amount: {
             value: amount,
             currency_code: "USD",
+            breakdown: {
+              item_total: { value: amount, currency_code: "USD" },
+              shipping: {
+                value: shippingOptions[0].amount.value,
+                currency_code: "USD",
+              },
+              tax_total: {
+                value: "0.00",
+                currency_code: "USD",
+              },
+            },
           },
           shipping: {
-            options: await payPalShipping(),
+            options: shippingOptions,
           },
+          items: [
+            {
+              name: "Toto Neorest RH Dual-Flush Toilet",
+              unit_amount: { value: amount, currency_code: "USD" },
+              quantity: "1",
+            },
+          ],
         },
       ],
+      application_context: {
+        brand_name: "Payment Sandbox",
+      },
     });
   };
 
   const onApprove = (data: any, actions: any) => {
     return actions.order.capture().then((details: any) => {
-      console.log(details);
+      setCustomerDetails(details);
     });
   };
 

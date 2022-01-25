@@ -8,7 +8,7 @@ export const payPalShipping = async () => {
       type: "SHIPPING",
       selected: true,
       amount: {
-        value: "3.00",
+        value: "0.00",
         currency_code: "USD",
       },
     },

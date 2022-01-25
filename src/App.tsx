@@ -3,7 +3,8 @@ import React from "react";
 import { PayPalButton } from "./PayPalButton";
 
 function App() {
-  const [amount, setAmount] = React.useState<string>("1");
+  const [amount, setAmount] = React.useState<string>("5291");
+  const [customerDetails, setCustomerDetails] = React.useState<any>();
 
   const style = {
     layout: "horizontal",
@@ -26,7 +27,67 @@ function App() {
         </div>
 
         <div className="button-container">
-          <PayPalButton amount={amount} style={style} />
+          <PayPalButton
+            amount={amount}
+            style={style}
+            setCustomerDetails={setCustomerDetails}
+          />
+        </div>
+        <div
+          className="customer-info"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+          <input
+            type={"string"}
+            value={customerDetails?.payer?.name.given_name ?? null}
+            placeholder="First Name"
+          />
+          <input
+            type={"string"}
+            value={customerDetails?.payer?.name.surname ?? null}
+            placeholder="Last Name"
+          />
+          <input
+            type={"string"}
+            value={
+              customerDetails?.purchase_units?.[0]?.shipping.address
+                .address_line_1 ?? null
+            }
+            placeholder="Street Address"
+          />
+          <input
+            type={"string"}
+            value={
+              customerDetails?.purchase_units?.[0]?.shipping.address
+                .address_line_2 ?? null
+            }
+            placeholder="Apt, Suite, etc."
+          />
+          <input
+            type={"string"}
+            value={
+              customerDetails?.purchase_units?.[0]?.shipping.address
+                .postal_code ?? null
+            }
+            placeholder="Zip Code"
+          />
+          <input
+            type={"string"}
+            value={
+              customerDetails?.purchase_units?.[0]?.shipping.address
+                .admin_area_2 ?? null
+            }
+            placeholder="City"
+          />
+          <input
+            type={"string"}
+            value={
+              customerDetails?.purchase_units?.[0]?.shipping.address
+                .admin_area_1 ?? null
+            }
+            placeholder="State"
+          />
+          <input type={"string"} value={""} placeholder="Phone Number" />
         </div>
       </header>
     </div>
