@@ -1,6 +1,7 @@
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { PAYPAL_CLIENT_ID } from "./env";
 import { payPalShipping } from "./utils/shipping";
+import { payPalTax } from "./utils/tax";
 
 interface IPayPalButton {
   amount: string;
@@ -21,6 +22,7 @@ export const PayPalButton: React.FC<IPayPalButton> = ({
   setCustomerDetails,
 }) => {
   const createOrder = async (data: any, actions: any) => {
+    console.log(data);
     const shippingOptions = await payPalShipping();
     return actions.order.create({
       purchase_units: [
@@ -46,6 +48,7 @@ export const PayPalButton: React.FC<IPayPalButton> = ({
           items: [
             {
               name: "Toto Neorest RH Dual-Flush Toilet",
+              description: "The best toilet ever",
               unit_amount: { value: amount, currency_code: "USD" },
               quantity: "1",
             },
@@ -66,6 +69,8 @@ export const PayPalButton: React.FC<IPayPalButton> = ({
 
   const onShippingChange = async (data: any, actions: any): Promise<void> => {
     const shippingAmount = data.selected_shipping_option.amount.value;
+    const taxAmount = await payPalTax(data, amount, shippingAmount);
+
     return actions.order.patch([
       {
         op: "replace",
@@ -73,7 +78,9 @@ export const PayPalButton: React.FC<IPayPalButton> = ({
         value: {
           currency_code: "USD",
           value: (
-            parseFloat(amount ?? "") + parseFloat(shippingAmount)
+            parseFloat(amount ?? "") +
+            parseFloat(shippingAmount) +
+            parseFloat(taxAmount)
           ).toFixed(2),
           breakdown: {
             item_total: {
@@ -83,6 +90,10 @@ export const PayPalButton: React.FC<IPayPalButton> = ({
             shipping: {
               currency_code: "USD",
               value: shippingAmount,
+            },
+            tax_total: {
+              value: taxAmount,
+              currency_code: "USD",
             },
           },
         },
