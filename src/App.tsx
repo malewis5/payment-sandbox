@@ -48,8 +48,6 @@ function App() {
                   }}
                   payment={{
                     subtotal: amount ?? "",
-                    tax: "1",
-                    shipping: "0.99",
                   }}
                   storeName="Sandbox Demo"
                   client={clientInstance}
@@ -71,6 +69,8 @@ function App() {
                 //@ts-ignore
                 shippingHandler={payPalShipping}
                 taxHandler={payPalTax}
+                onPaymentSuccess={(data: any) => console.log(data)}
+                onPaymentError={(err: any) => console.log(err)}
               />
               <button className="checkout-button">Submit Order</button>
             </>
