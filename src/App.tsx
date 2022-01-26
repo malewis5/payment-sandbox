@@ -12,8 +12,13 @@ import {
   PayPalButtonShape,
 } from "@peakactivity/revcom-payment-components";
 import "@peakactivity/revcom-payment-components/lib/index.css";
-import { appleShipping, payPalShipping } from "./utils/shipping";
+import {
+  appleShipping,
+  appleStaticShipping,
+  payPalShipping,
+} from "./utils/shipping";
 import { appleTax, payPalTax } from "./utils/tax";
+import { applePaymentError, applePaymentSuccess } from "./utils/paymentSuccess";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("1");
@@ -40,17 +45,16 @@ function App() {
             <>
               {isSupported && (
                 <ApplePayButton
-                  onPaymentSuccess={(res) => {
-                    console.log(res.json());
-                  }}
-                  onPaymentError={(e) => {
-                    console.log(e);
-                  }}
+                  onPaymentSuccess={applePaymentSuccess}
+                  onPaymentError={applePaymentError}
                   payment={{
-                    subtotal: amount ?? "",
+                    subtotal: amount,
+                    shipping: "0",
+                    tax: "0",
                   }}
                   storeName="Sandbox Demo"
                   client={clientInstance}
+                  shippingMethods={appleStaticShipping}
                   shippingHandler={appleShipping}
                   //@ts-ignore
                   taxHandler={appleTax}

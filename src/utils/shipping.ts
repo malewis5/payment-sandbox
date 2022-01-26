@@ -50,3 +50,22 @@ export const appleShipping = async (e: any): Promise<[]> => {
   ).then((data: any) => data.json());
   return fetchShippingOptions;
 };
+
+export const appleStaticShipping = [
+  {
+    // The label shown in the payment sheet
+    label: "Free Shipping",
+    // Text shown below the label used to indicate timing
+    detail: "5-7 days",
+    // A unique identifier for this shipping method
+    identifier: "FreeShip",
+    // The total cost of this shipping method
+    amount: "0",
+  },
+  {
+    label: "Expedited Shipping",
+    detail: "2 days",
+    identifier: "ExpShip",
+    amount: "9.99",
+  },
+];
