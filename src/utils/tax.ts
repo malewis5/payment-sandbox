@@ -25,8 +25,8 @@ export const payPalTax = async (data: any, amount: any, shipping: any) => {
 
 export const appleTax = async (
   e: ApplePayJS.ApplePayShippingContactSelectedEvent,
-  amount: string,
-  shipping: string
+  amount?: string,
+  shipping?: string
 ): Promise<string> => {
   const requestOptions = {
     method: "POST",

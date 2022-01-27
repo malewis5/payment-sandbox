@@ -56,7 +56,6 @@ function App() {
                   client={clientInstance}
                   shippingMethods={appleStaticShipping}
                   shippingHandler={appleShipping}
-                  //@ts-ignore
                   taxHandler={appleTax}
                   buttonType={ApplePayButtonLabel.buy}
                   buttonColor={ApplePayColorLabel.white}
@@ -66,11 +65,12 @@ function App() {
               <PayPalButton
                 client={clientInstance}
                 amount={amount}
-                color={PayPalButtonColor.gold}
-                label={PayPalButtonLabel.checkout}
-                shape={PayPalButtonShape.rect}
-                height={30}
-                //@ts-ignore
+                style={{
+                  color: PayPalButtonColor.blue,
+                  label: PayPalButtonLabel.pay,
+                  shape: PayPalButtonShape.rect,
+                  height: 30,
+                }}
                 shippingHandler={payPalShipping}
                 taxHandler={payPalTax}
                 onPaymentSuccess={(data: any) => console.log(data)}

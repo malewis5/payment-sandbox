@@ -1,6 +1,6 @@
 import { PAYMENT_MS_ENDPOINT } from "../env";
 
-export const payPalShipping = async () => {
+export const payPalShipping = async (): Promise<any> => {
   const shippingOptions = [
     {
       id: "SHIP_123",
