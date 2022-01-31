@@ -1,90 +1,87 @@
 import "./App.scss";
 import React from "react";
 import {
-  useGenerateClientToken,
-  IsApplePaySupported,
-  ApplePayButton,
-  PayPalButton,
-  ApplePayButtonLabel,
-  ApplePayColorLabel,
-  PayPalButtonColor,
-  PayPalButtonLabel,
-  PayPalButtonShape,
-} from "@peakactivity/revcom-payment-components";
-import "@peakactivity/revcom-payment-components/lib/index.css";
-import {
-  appleShipping,
-  appleStaticShipping,
-  payPalShipping,
-} from "./utils/shipping";
-import { appleTax, payPalTax } from "./utils/tax";
-import { applePaymentError, applePaymentSuccess } from "./utils/paymentSuccess";
+  PayPalScriptProvider,
+  BraintreePayPalButtons,
+} from "@paypal/react-paypal-js";
 
 function App() {
   const [amount, setAmount] = React.useState<string>("1");
-  const { clientInstance, serverError, isLoading } = useGenerateClientToken();
-  const isSupported = IsApplePaySupported();
+
+  const postNonce = async (payload: any, amount: string): Promise<any> => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nonce: payload?.nonce,
+        payment: {
+          total: {
+            amount: amount,
+          },
+        },
+        postalCode: payload?.details?.shipping_address?.postalCode ?? null,
+        shippingContact: payload?.details?.shippingAddress ?? null,
+        billingContact: payload?.details?.billingContact ?? null,
+      }),
+    };
+
+    await fetch(
+      `${process.env.REACT_APP_PAYMENT_MS_ENDPOINT}/payment-nonce`,
+      requestOptions
+    )
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error("Error posting nonce");
+        }
+        return res.json();
+      })
+      .catch((e: any) => e);
+  };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div className="dollar-input">
-          <p>Amount must be greater than $0</p>
-          <input
-            type="number"
-            pattern="[0-9]*"
-            min="2"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
-        </div>
+    <PayPalScriptProvider
+      options={{
+        "client-id": "test",
+        "data-user-id-token": "sandbox_q7gs6p9p_zr7jhjxy86w6tch3",
+        "disable-funding": "venmo,credit,card",
+      }}
+    >
+      <div className="App">
+        <header className="App-header">
+          <div className="dollar-input">
+            <p>Amount must be greater than $0</p>
+            <input
+              type="number"
+              pattern="[0-9]*"
+              min="2"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </div>
 
-        <div className="button-container">
-          {isLoading && <p>Loading...</p>}
-          {!isLoading && (
-            <>
-              {isSupported && (
-                <ApplePayButton
-                  onPaymentSuccess={applePaymentSuccess}
-                  onPaymentError={applePaymentError}
-                  payment={{
-                    subtotal: amount,
-                    shipping: "0",
-                    tax: "0",
-                  }}
-                  storeName="Sandbox Demo"
-                  client={clientInstance}
-                  shippingMethods={appleStaticShipping}
-                  shippingHandler={appleShipping}
-                  taxHandler={appleTax}
-                  buttonType={ApplePayButtonLabel.buy}
-                  buttonColor={ApplePayColorLabel.white}
-                />
-              )}
-
-              <PayPalButton
-                client={clientInstance}
-                amount={amount}
-                style={{
-                  color: PayPalButtonColor.blue,
-                  label: PayPalButtonLabel.pay,
-                  shape: PayPalButtonShape.rect,
-                  height: 30,
-                }}
-                shippingHandler={payPalShipping}
-                taxHandler={payPalTax}
-                onPaymentSuccess={(data: any) => console.log(data)}
-                onPaymentError={(err: any) => console.log(err)}
-              />
-              <button className="checkout-button">Submit Order</button>
-            </>
-          )}
-        </div>
-        {serverError && (
-          <p className="error">Error connecting to payment microservice</p>
-        )}
-      </header>
-    </div>
+          <div className="button-container">
+            <BraintreePayPalButtons
+              forceReRender={[amount]}
+              createOrder={(data, actions) => {
+                return actions.braintree.createPayment({
+                  flow: "checkout",
+                  amount: "10.0",
+                  currency: "USD",
+                  intent: "capture",
+                });
+              }}
+              onApprove={(data, actions) => {
+                return actions.braintree
+                  .tokenizePayment(data)
+                  .then((payload) => {
+                    postNonce(payload, amount);
+                  });
+              }}
+            />
+          </div>
+        </header>
+      </div>
+    </PayPalScriptProvider>
   );
 }
 
