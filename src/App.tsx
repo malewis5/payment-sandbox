@@ -62,11 +62,11 @@ function App() {
               <PayPalButton
                 client={clientInstance}
                 amount={amount}
-                color={PayPalButtonColor.gold}
-                label={PayPalButtonLabel.checkout}
-                shape={PayPalButtonShape.rect}
-                height={30}
-                //@ts-ignore
+                style={{
+                  label: PayPalButtonLabel.paypal,
+                  color: PayPalButtonColor.silver,
+                  height: 30,
+                }}
                 shippingHandler={payPalShipping}
                 taxHandler={payPalTax}
                 onPaymentSuccess={(data: any) => console.log(data)}
